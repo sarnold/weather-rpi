@@ -35,9 +35,9 @@ function respondToHttpRequest(req, res) {
 		res.end(jsonstring);
 	} else {
 		var filePath = path.join(__dirname, url);
-        console.log('sending contents of local file: ' + filePath);
         fs.exists(filePath, function(exists) {
             if (exists) {
+                console.log('sending contents of local file: ' + filePath);
                 var stat = fs.statSync(filePath);
                 var contenttype = "text/html";
                 if (endsWith(url, ".css"))  {
@@ -53,8 +53,9 @@ function respondToHttpRequest(req, res) {
                 var readStream = fs.createReadStream(filePath);
                 readStream.pipe(res);
             } else {
-                res.writeHead(404);        // HTTP status 404: NotFound
-                res.end('Not found');
+                console.log('returning 404, could not find requested file: ' + filePath);
+                res.writeHead(404);
+                res.end('Not found.  Go away kid, you\'re bothering me.');
             }
         });
         

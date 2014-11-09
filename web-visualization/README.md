@@ -43,5 +43,7 @@ What's with the Vagrant stuff?
 You could just as easily run this on your local machine,
 but if you want to be fancy about it, you can use the included
 `Vagrantfile` and `bootstrap.sh` to run this in a Vagrant environment.
-(not really sure why I did it this way, guess I was just having fun
-experimenting with Vagrant)
+It creates a basic Ubuntu 12.04 32-bit environment and installs all
+the goodies you'll need (mostly `node` and `screen`) and forwards
+`localhost:8080` to `virtual_machine:8080.`  (I'm not really sure why
+I did it this way, guess I was just having fun experimenting with Vagrant...)
