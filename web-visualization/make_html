@@ -1,0 +1,15 @@
+#!/usr/bin/perl
+my $i;
+my $j;
+my $k = 0;
+my $gridSize = 50;
+my $squareSize = 16;
+
+for ($i = 0; $i < $gridSize; $i++)  {
+  for ($j = 0; $j < $gridSize; $j++)  {
+    print "<svg id=\"square$k\" width=\"$squareSize\" height=\"$squareSize\"></svg>\n";
+    $k++;
+  }
+  print "<br />\n";
+}
+
