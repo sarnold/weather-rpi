@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# display information on rpi (for weather demo)
+# display information on rpi
 # using the pygame module
 # assuming PiTFT hardware
 
@@ -11,8 +11,8 @@ import os, sys
 
 # globals section
 
-wpix=320   # display width in pixels
-dpix=240   # display depth in pixels
+wpix=320   # PiTFT display width in pixels
+dpix=240   # PiTFT display depth in pixels
 
 str_tp=__builtins__.str
 int_tp=__builtins__.int
