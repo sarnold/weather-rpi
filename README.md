@@ -1,5 +1,5 @@
 weather-rpi
 ===========
 
-Raspberry Pi weather software
+Awesome Raspberry Pi weather software
 
