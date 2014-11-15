@@ -39,7 +39,7 @@ except:
     logger.warning("Could not import the RPi.GPIO package (http://pypi.python.org/pypi/RPi.GPIO). Using a mock instead. Notice that this is useful only for the purpose of debugging this module, but will not give the end user any useful result.")
     import RPiMock.GPIO as GPIO
     traceback.print_exc(file=sys.stdout)
- 
+
 #   Conversion coefficients from SHT15 datasheet
 D1 = -40.0  # for 14 Bit @ 5V
 D2 =  0.01 # for 14 Bit DEGC
@@ -49,7 +49,7 @@ C2 =  0.0367       # for 12 Bit
 C3 = -0.0000015955 # for 12 Bit
 T1 =  0.01      # for 14 Bit @ 5V
 T2 =  0.00008   # for 14 Bit @ 5V
-    
+
 class Sht1x(object):
     GPIO_BOARD = GPIO.BOARD
     GPIO_BCM = GPIO.BCM
@@ -58,9 +58,20 @@ class Sht1x(object):
         self.dataPin = dataPin
         self.sckPin = sckPin
         GPIO.setmode(gpioMode)
-        
+
 #    I deliberately will not implement read_temperature_F because I believe in the
 #    in the Metric System (http://en.wikipedia.org/wiki/Metric_system)
+
+    def soft_reset(self):
+        GPIO.setup(self.dataPin, GPIO.OUT, -1)
+        GPIO.setup(self.sckPin, GPIO.OUT, -1)
+        GPIO.setup(self.dataPin, GPIO.IN, pull_up_down=GPIO.PUD_OFF)
+        GPIO.setup(self.sckPin, GPIO.IN, pull_up_down=GPIO.PUD_OFF)
+
+        resetCommand = 0b00011110
+        ret = self.__sendCommand(resetCommand)
+        time.sleep(.011)
+        return ret
 
     def read_temperature_C(self):
         temperatureCommand = 0b00000011
@@ -69,23 +80,25 @@ class Sht1x(object):
         self.__waitForResult()
         rawTemperature = self.__getData16Bit()
         self.__skipCrc()
-        GPIO.cleanup()
+        self.soft_reset()
+        #GPIO.cleanup()
 
         return rawTemperature * D2 + D1
-        
 
     def read_humidity(self):
 #        Get current temperature for humidity correction
         temperature = self.read_temperature_C()
         return self._read_humidity(temperature)
-    
+
     def _read_humidity(self, temperature):
         humidityCommand = 0b00000101
         self.__sendCommand(humidityCommand)
         self.__waitForResult()
         rawHumidity = self.__getData16Bit()
         self.__skipCrc()
-        GPIO.cleanup()
+        self.soft_reset()
+        #GPIO.cleanup()
+
 #        Apply linear conversion to raw value
         linearHumidity = C1 + C2 * rawHumidity + C3 * rawHumidity * rawHumidity
 #        Correct humidity value for current temperature
@@ -102,9 +115,10 @@ class Sht1x(object):
 
     def __sendCommand(self, command):
         #Transmission start
-        GPIO.setup(self.dataPin, GPIO.OUT)
-        GPIO.setup(self.sckPin, GPIO.OUT)
-                
+
+        GPIO.setup(self.dataPin, GPIO.OUT, initial=GPIO.LOW)
+        GPIO.setup(self.sckPin, GPIO.OUT, initial=GPIO.LOW)
+
         GPIO.output(self.dataPin, GPIO.HIGH)
         self.__clockTick(GPIO.HIGH)
         GPIO.output(self.dataPin, GPIO.LOW)
@@ -117,28 +131,28 @@ class Sht1x(object):
             GPIO.output(self.dataPin, command & (1 << 7 - i))
             self.__clockTick(GPIO.HIGH)
             self.__clockTick(GPIO.LOW)     
-        
+
         self.__clockTick(GPIO.HIGH)
-        
+
         GPIO.setup(self.dataPin, GPIO.IN)
-        
+
         ack = GPIO.input(self.dataPin)
         logger.debug("ack1: %s", ack)
         if ack != GPIO.LOW:
             logger.error("nack1")
-        
+
         self.__clockTick(GPIO.LOW)
-        
+
         ack = GPIO.input(self.dataPin)
         logger.debug("ack2: %s", ack)
         if ack != GPIO.HIGH:
             logger.error("nack2")        
-            
+
     def __clockTick(self, value):
         GPIO.output(self.sckPin, value)
 #       100 nanoseconds 
         time.sleep(.0000001)
-        
+
     def __waitForResult(self):
         GPIO.setup(self.dataPin, GPIO.IN)
 
@@ -150,7 +164,7 @@ class Sht1x(object):
                 break
         if ack == GPIO.HIGH:
             raise SystemError
-            
+
     def __getData16Bit(self):
         GPIO.setup(self.dataPin, GPIO.IN)
         GPIO.setup(self.sckPin, GPIO.OUT)
@@ -166,9 +180,9 @@ class Sht1x(object):
 #        Get the least significant bits
         GPIO.setup(self.dataPin, GPIO.IN)
         value |= self.__shiftIn(8)
-        
+
         return value
-    
+
     def __shiftIn(self, bitNum):
         value = 0
         for i in range(bitNum):
@@ -176,7 +190,7 @@ class Sht1x(object):
             value = value * 2 + GPIO.input(self.dataPin)
             self.__clockTick(GPIO.LOW)
         return value
-     
+
     def __skipCrc(self):
 #        Skip acknowledge to end trans (no CRC)
         GPIO.setup(self.dataPin, GPIO.OUT)
@@ -184,7 +198,7 @@ class Sht1x(object):
         GPIO.output(self.dataPin, GPIO.HIGH)
         self.__clockTick(GPIO.HIGH)
         self.__clockTick(GPIO.LOW)
-    
+
     def __connectionReset(self):
         GPIO.setup(self.dataPin, GPIO.OUT)
         GPIO.setup(self.sckPin, GPIO.OUT)
@@ -201,25 +215,25 @@ class WaitingSht1x(Sht1x):
     def read_temperature_C(self):
         self.__wait()        
         return super(WaitingSht1x, self).read_temperature_C()
-    
+
     def read_humidity(self):
         temperature = self.read_temperature_C()
         self.__wait()
         return super(WaitingSht1x, self)._read_humidity(temperature)
-    
+
     def read_temperature_and_Humidity(self):
         temperature = self.read_temperature_C()
         self.__wait()
         humidity = super(WaitingSht1x, self)._read_humidity(temperature)
         return (temperature, humidity)
-            
+
     def __wait(self):
         lastInvocationDelta = time.time() - self.__lastInvocationTime
 #        if we queried the sensor less then a second ago, wait until a second is passed
         if lastInvocationDelta < 1:
             time.sleep(1 - lastInvocationDelta)
         self.__lastInvocationTime = time.time()
-        
+
 def main():
     sht1x = WaitingSht1x(11, 7)
     print(sht1x.read_temperature_C())
@@ -227,6 +241,6 @@ def main():
     aTouple = sht1x.read_temperature_and_Humidity()
     print("Temperature: {} Humidity: {}".format(aTouple[0], aTouple[1]))
     print(sht1x.calculate_dew_point(20, 50))
-    
+
 if __name__ == '__main__':
     main()
