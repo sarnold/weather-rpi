@@ -1,9 +1,6 @@
 ========
-rpisht1x
+rpiSht1x
 ========
-
-Python SHT1x sensor code (forked from https://bitbucket.org/lunobili/rpisht1x.git)
-
 This module reads Humidity and Temperature from a Sensirion SHT1x sensor. It has been tested
 both with an SHT11 and an SHT15.
 
@@ -39,4 +36,3 @@ Release Notes
   in order to prevent the sensor from heating and skewing the temperature readings. 
 
 * v1.0, 7/10/2012 -- Initial release.
->>>>>>> upstream/master
