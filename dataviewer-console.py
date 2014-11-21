@@ -15,18 +15,21 @@ from types import IntType,FloatType,StringType
 # globals section
 srf=pygame.Surface
 rct=pygame.Rect
- 
+
+# test globals
+sec=1000
+wait_time=10*sec    # milliseconds
+
 class scr:
     def __init__(self,szw=320, szd=240,  # PiTFT size (pixels)
                  bckgnd=(250,250,250)    # gray
                 ):
-        self.win=Surface((szw,szd))  # the displayable window
+        self.win=srf((szw,szd))  # the displayable window
         self.back_color=bckgnd
         self.win.fill(self.back_color)
-        # field dictionary - {fldtag:([fldobj,xpos,ypos]
+        # field dictionary - {fldtag:(fldobj,xpos,ypos)}
         self.fields={}
         # which data to which fields and how
-        # {ftag:dftag dffmt lbtag lbfmt}
         self.assg_dic={}
         
     def config(self,cf):  # configuration object required
@@ -34,7 +37,7 @@ class scr:
         
     # add a field to the field dictionary
     def add_field(self,ftag,fld,fldx,fldy):
-        self.fields[ftag]=[fld,fldx,fldy]
+        self.fields[ftag]=(fld,fldx,fldy)
 
     # remove a field from the field dictionary   
     def del_field(self,ftag):
@@ -47,7 +50,7 @@ class scr:
              
     def set_assignments(self,asgs):
         self.assg_dic=asgs
-           
+                   
     def display_field(self,name):
         pass
         
@@ -74,7 +77,7 @@ class fld:  # describes a field for a screen
         self.fld_depth=dd
         self.font=None     # pygame uses a default font if None
         self.fld_color=clr # default color is black
-        self.win=Surface((ww,dd))  # displayable window for field
+        self.win=srf((ww,dd))  # displayable window for field
         
     def set_color(self,c):
         # background color for field
@@ -212,17 +215,90 @@ class assignments:
         
     def config(self,cf):  # configuration object required
         pass
-  
+
+def bogus_config(ccc='ccc',fff=[]):
+    print ccc,fff
+    fff.append('ugluk')
+    #print fff
+    xlocs=[10,110]
+    ylocs=range(10,300,30)
+    fd=30
+    fw=100
+    locs=[(x,y)  for y in ylocs for x in xlocs]
+    # {data-tag:[source, type, label, description] }
+    val_desc={
+            'v1':['One',"S",'field 1','this is the first datavalue'],
+            'v2':['Two',"S",'field 2',''],
+            'v3':['No. 3'     ,"S",'field 3','third datavalue'],
+            'v4':['testing',"S",'field 1','testing datavalue'],
+            'v5':['here',"S",'field 1','not the first datavalue'],
+            'v6':['Three',"S",'field 6','this is #6 datavalue'],
+            'v7':['Seven',"S",'nice 1' ,'this is the 7th datavalue'],
+            'v8':['overthere',"S",'field 8','looking at a datavalue'],
+            'v9':['Nine',"S",'field 9','this is the #nine datavalue'],
+            'vz':['zzzz',"S",'field z','this is the last datavalue']  
+         }
+    fff.append(val_desc)
+    ftags=["f1","f2","f3","f4","f5","f6","f7","f8","f9","f0"]
+    # field -  __init__(self,tg,clr=(0,0,0),ww=70,dd=10):
+    # dic   -  {fldtag:(fldobj,xpos,ypos)}
+    fdic={}
+    for ff in range(len(ftags)):
+        fdic[ftags[ff]]=(fld(ftags[ff],ww=fw,dd=fd),locs[ff][0],locs[ff][1])
+    fff.append(fdic)
+    vals={
+          'v1':"So she went",'v2':"into the garden",'v3':"to pick",
+          'v4':"a cabbage leaf",'v5':"Who has seen the wind?",
+          'v6':"foofaraw",'v7':"whiffletree",'v8':"snork",
+          'v9':"fiddle-dee-dee",'vz':"(the end)"
+         }
+    dtags=['v1','v2','v3','v4','v5','v6','v7','v8','v9','vz']  
+    aassggss={}
+    # assigs[field_tag]=(data_tag,data_value,data_type,dsp_attr)
+    #                                           ='S'     =None
+    for ff in range(len(ftags)):
+        tg=ftags[ff]
+        dtg=dtags[ff]
+        dv=vals[dtg]
+        desc_rec=val_desc[dtg]
+        dtp=desc_rec[1]
+        attr=display_attribs()  # it needs its own
+                                # what if we add (or change) format
+        aassggss[tg]=(dtg,dv,dtp,attr)   
+    fff.append(aassggss)
+    
+def testing(tdata=[]):
+    print "testing, 1,2,3..."
+    import pdb; pdb.set_trace()
+    bogus_config(fff=tdata)
+    #print tdata, "from testing app"
+    v=tdata[1]
+    f=tdata[2]
+    a=tdata[3]
+    print "v",v,"f",f,"a",a
+    s=scr()
+    #c=cfg()
+    att=display_attribs()
+    agm=assignments()
+    
+    
+    print "end of test"
+
 def main(con="conf",dat="data",pic="pix",cf="lay.json"):
     print "pyg start"
     
-'''
     # configuration
+    #bogus_config(con,cf)
+        
     # initialize pygame
     pygame.init()
-    screen=dsp.set_mode((wpix,dpix))  # the display object
+    screen=dsp.set_mode((320,240))  # the display object
     dsp.set_caption('Weather Demo')
     
+    # run test code
+    testing()
+    
+    """    
     # initialize screen
     # fields are defined
     # fields are not displayed yet
@@ -241,17 +317,17 @@ def main(con="conf",dat="data",pic="pix",cf="lay.json"):
         tm.wait(8000)
         onward=False    
         # exit test?
-        # end of main loop
+        # entd of main loop
         
-    
+    """
+    print "I'm waiting..."
+    tm.wait(wait_time)
     pygame.quit()
-'''    
-    
-print "Goodbye, pyg"
+   
 
 
-
-
-#this calls the 'main' function when this script is executed
+# this calls the 'main' function when this script is executed
 if __name__ == '__main__':
+    print "Hello, pyg"
     main()
+print "Goodbye, pyg"
