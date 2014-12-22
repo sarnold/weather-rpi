@@ -1,0 +1,3 @@
+[submodule "web-visualization/gwocss"]
+	path = web-visualization/gwocss
+	url = https://github.com/sarnold/gwocss.git
