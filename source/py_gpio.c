@@ -83,11 +83,10 @@ static PyObject *py_cleanup(PyObject *self, PyObject *args, PyObject *kwargs)
          // clean up any /sys/class exports
          event_cleanup_all();
 
-         // set everything back to input
+         // set everything back to original function
          for (i=0; i<54; i++) {
-            if (gpio_direction[i] != -1) {
-               setup_gpio(i, INPUT, PUD_OFF);
-               gpio_direction[i] = -1;
+            if (gpio_orig_function[i] != -1) {
+               set_gpio_function(i, gpio_orig_function[i]);
                found = 1;
             }
          }
@@ -95,10 +94,9 @@ static PyObject *py_cleanup(PyObject *self, PyObject *args, PyObject *kwargs)
          // clean up any /sys/class exports
          event_cleanup(gpio);
 
-         // set everything back to input
-         if (gpio_direction[gpio] != -1) {
-            setup_gpio(gpio, INPUT, PUD_OFF);
-            gpio_direction[gpio] = -1;
+         // set everything back to original function
+         if (gpio_orig_function[gpio] != -1) {
+            set_gpio_function(gpio, gpio_orig_function[gpio]);
             found = 1;
          }
       }
@@ -132,6 +130,11 @@ static PyObject *py_setup_channel(PyObject *self, PyObject *args, PyObject *kwar
          return 0;
 
       func = gpio_function(gpio);
+      // save original function setting for pin (should restore it in cleanup)
+      if (gpio_orig_function[gpio] == -1)
+      {
+          gpio_orig_function[gpio] = func;
+      }
       if (gpio_warnings &&                             // warnings enabled and
           ((func != 0 && func != 1) ||                 // (already one of the alt functions or
           (gpio_direction[gpio] == -1 && func == 1)))  // already an output not set from this program)
@@ -875,6 +878,10 @@ PyMODINIT_FUNC initGPIO(void)
 
    for (i=0; i<54; i++)
       gpio_direction[i] = -1;
+
+   for (i=0; i<54; i++)
+      gpio_orig_function[i] = -1;
+
 
    // detect board revision and set up accordingly
    revision = get_rpi_revision();

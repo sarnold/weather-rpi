@@ -190,6 +190,17 @@ int gpio_function(int gpio)
     return value; // 0=input, 1=output, 4=alt0
 }
 
+void set_gpio_function(int gpio, int func)
+{
+    int offset = FSEL_OFFSET + (gpio/10);
+    int shift = (gpio%10)*3;
+    int value = (func & 0x7) << shift;
+    
+    // clear old field and insert desired function number
+    *(gpio_map+offset) &= ~(0x7 << shift);
+    *(gpio_map+offset) |= value;
+}
+
 void output_gpio(int gpio, int value)
 {
     int offset, shift;
