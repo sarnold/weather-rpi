@@ -17,7 +17,7 @@ Example Usage:
 >>> sht1x = SHT1x(11,7)
 >>> sht1x.read_temperature_C()
 25.22
->>> sht1x.read_humidity()     
+>>> sht1x.read_humidity()
 52.6564216
 
 '''
@@ -73,6 +73,10 @@ class Sht1x(object):
         time.sleep(.011)
         return ret
 
+    def let_go(self):
+        GPIO.cleanup(self.sckPin)
+        GPIO.cleanup(self.dataPin)
+
     def read_temperature_C(self):
         temperatureCommand = 0b00000011
 
@@ -102,7 +106,7 @@ class Sht1x(object):
 #        Apply linear conversion to raw value
         linearHumidity = C1 + C2 * rawHumidity + C3 * rawHumidity * rawHumidity
 #        Correct humidity value for current temperature
-        return (temperature - 25.0 ) * (T1 + T2 * rawHumidity) + linearHumidity            
+        return (temperature - 25.0 ) * (T1 + T2 * rawHumidity) + linearHumidity
 
     def calculate_dew_point(self, temperature, humidity):
         if temperature > 0:
@@ -130,7 +134,7 @@ class Sht1x(object):
         for i in range(8):
             GPIO.output(self.dataPin, command & (1 << 7 - i))
             self.__clockTick(GPIO.HIGH)
-            self.__clockTick(GPIO.LOW)     
+            self.__clockTick(GPIO.LOW)
 
         self.__clockTick(GPIO.HIGH)
 
@@ -146,11 +150,11 @@ class Sht1x(object):
         ack = GPIO.input(self.dataPin)
         logger.debug("ack2: %s", ack)
         if ack != GPIO.HIGH:
-            logger.error("nack2")        
+            logger.error("nack2")
 
     def __clockTick(self, value):
         GPIO.output(self.sckPin, value)
-#       100 nanoseconds 
+#       100 nanoseconds
         time.sleep(.0000001)
 
     def __waitForResult(self):
@@ -213,7 +217,7 @@ class WaitingSht1x(Sht1x):
         self.__lastInvocationTime = 0
 
     def read_temperature_C(self):
-        self.__wait()        
+        self.__wait()
         return super(WaitingSht1x, self).read_temperature_C()
 
     def read_humidity(self):
@@ -241,6 +245,7 @@ def main():
     aTouple = sht1x.read_temperature_and_Humidity()
     print("Temperature: {} Humidity: {}".format(aTouple[0], aTouple[1]))
     print(sht1x.calculate_dew_point(20, 50))
+    sht1x.let_go()
 
 if __name__ == '__main__':
     main()
