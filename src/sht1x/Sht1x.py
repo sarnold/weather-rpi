@@ -73,10 +73,6 @@ class Sht1x(object):
         time.sleep(.011)
         return ret
 
-    def let_go(self):
-        GPIO.cleanup(self.sckPin)
-        GPIO.cleanup(self.dataPin)
-
     def read_temperature_C(self):
         temperatureCommand = 0b00000011
 
@@ -84,8 +80,7 @@ class Sht1x(object):
         self.__waitForResult()
         rawTemperature = self.__getData16Bit()
         self.__skipCrc()
-        self.soft_reset()
-        #GPIO.cleanup()
+        GPIO.cleanup()
 
         return rawTemperature * D2 + D1
 
@@ -100,8 +95,7 @@ class Sht1x(object):
         self.__waitForResult()
         rawHumidity = self.__getData16Bit()
         self.__skipCrc()
-        self.soft_reset()
-        #GPIO.cleanup()
+        GPIO.cleanup()
 
 #        Apply linear conversion to raw value
         linearHumidity = C1 + C2 * rawHumidity + C3 * rawHumidity * rawHumidity
@@ -245,7 +239,6 @@ def main():
     aTouple = sht1x.read_temperature_and_Humidity()
     print("Temperature: {} Humidity: {}".format(aTouple[0], aTouple[1]))
     print(sht1x.calculate_dew_point(20, 50))
-    sht1x.let_go()
 
 if __name__ == '__main__':
     main()

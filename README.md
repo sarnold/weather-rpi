@@ -6,8 +6,9 @@ Python SHT1x sensor code (forked from https://bitbucket.org/lunobili/rpisht1x.gi
 
 This module reads Humidity and Temperature from a Sensirion SHT1x sensor. It has been tested
 both with an SHT11 and an SHT15.  Unfortunately this sensor uses a proprietary protocol that
-is not compatible with the I2C or SMBus standards (ie, once you talk to the sensor, it craps
-on the bus). There needs to be a fix somewhere to use with other I2C sensors on the same pins.
+is not compatible with the I2C or SMBus standards. (ie, the protocol abuses the stop-bit).
+Fortunately there's a decent workaround in the VCT fork of RPi.GPIO which correctly releases
+the pins under most conditions.
 
 It is meant to be used in a Raspberry Pi and depends on this module (http://pypi.python.org/pypi/RPi.GPIO).
 
