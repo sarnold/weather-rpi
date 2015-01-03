@@ -1,0 +1,32 @@
+body {
+    background-color: #000000;
+    color: #FFFFFF;
+}
+.wind-arrow {
+    fill: #ff0000;
+    stroke: #ffffff;
+}
+.wind-arrow-0 {
+    fill: #ff0000;
+    stroke: #ffffff;
+}
+.wind-arrow-5 {
+    fill: #ff0000;
+    stroke: #00ff00;
+}
+.wind-arrow-10 {
+    fill: #ff0000;
+    stroke: #66ff00;
+}
+.wind-arrow-15 {
+    fill: #ff0000;
+    stroke: #ffff00;
+}
+.wind-arrow-20 {
+    fill: #ff0000;
+    stroke: #ff6600;
+}
+.wind-arrow-25 {
+    fill: #ff0000;
+    stroke: #ff0000;
+}

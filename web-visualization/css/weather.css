@@ -1,0 +1,17 @@
+.ui-wait-button .ui-icon-waiting {
+   background-image: url("images/spinner.gif");
+   background-position: 0 center;
+}
+
+body {
+    font-family: Verdana,Arial,sans-serif;
+    font-size: 10px;
+}
+
+p {
+    margin: 1em 0;   
+}
+
+strong {
+    font-weight: 900;   
+}
