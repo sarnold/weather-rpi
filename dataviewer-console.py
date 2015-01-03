@@ -40,8 +40,19 @@ class scr:
         # which data to which fields and how
         self.assg_dic={}
         
-    def config(self,cf):  # configuration object required
-        pass
+    def config(self,cf):  # name of json config file required
+        jj=open(cf,'r')
+        cfg=json.load(jj)
+        jj.close()
+        self.js_config=cfg
+        print 'cfg:',cfg
+        dsp_dat=cfg[0]["DSP"]
+        scr_dat=dsp_dat[1:7]
+        fld_dat=dsp_dat[8]
+        self.fields=fld_dat
+        dsc_dat=cfg[1]["DESC"]
+        asg_dat=cfg[2]["ASG"]
+        self.set_assignments(asg_dat)
         
     # add a field to the field dictionary
     def add_field(self,ftag,fld,fldx,fldy):
@@ -392,7 +403,7 @@ def testing(td=[]):
     dsp.flip()
     print "end of test"
 
-def main(con="conf",dat="data",pic="pix",cf="lay.json"):
+def main(con="conf",dat="data",pic="pix",cf="wx.json"):
     print "pyg start"
     global screen,scr,tdata,defont,ren,load
     
@@ -409,14 +420,17 @@ def main(con="conf",dat="data",pic="pix",cf="lay.json"):
         
     # run test code
     testing(tdata)
-    
-    """    
+       
     # initialize screen
     # fields are defined
     # fields are not displayed yet
-    wxf=scr(con,dat,pic)
-    wxf.config(cf)
+    wxf=scr()
+    ccff=con+'/'+cf
+    wxf.config(ccff)
+    print "(fields)" , wxf.fields
     
+    
+    """
     # the main loop is a do-forever
     onward=True
     while(onward):
@@ -435,7 +449,7 @@ def main(con="conf",dat="data",pic="pix",cf="lay.json"):
     print "I'm waiting..."
     tm.wait(wait_time)
     pygame.quit()
-   
+    sys.exit(100)
 
 
 # this calls the 'main' function when this script is executed
