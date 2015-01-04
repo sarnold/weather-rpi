@@ -39,6 +39,9 @@ class scr:
         self.fields={}
         # which data to which fields and how
         self.assg_dic={}
+        self.data_dir=''
+        self.dat_name=''
+        self.ddict={}
         
     def config(self,cf):  # name of json config file required
         jj=open(cf,'r')
@@ -48,8 +51,12 @@ class scr:
         print 'cfg:',cfg
         dsp_dat=cfg[0]["DSP"]
         scr_dat=dsp_dat[1:7]
-        fld_dat=dsp_dat[8]
-        self.fields=fld_dat
+        fld_dat=dsp_dat[8]['dsp_fields']
+        for frec in fld_dat:
+            zorch,w,d=fld_dat[frec]
+            fff=fld(frec)
+            new_fd=(fff,w,d)
+            self.fields[frec]=new_fd
         dsc_dat=cfg[1]["DESC"]
         asg_dat=cfg[2]["ASG"]
         self.set_assignments(asg_dat)
@@ -71,10 +78,11 @@ class scr:
         self.assg_dic=asgs
                    
     def display_field(self,name):
-        print "displaying %s" % name
         fd,fdx,fdy=self.fields[name]
         fldwin=fd.win
+	# data tag, data object, data type, data attribute
         dttg,dtob,dttp,dtatt=self.assg_dic[name]
+        print "displaying %s: %s %s %s %s" % (name, dttg, dtob, dttp, dtatt)
         # get surface and centering
         valsrf,pos=self.get_val_srf(dttg,dtob,dttp,dtatt)
         horpos,verpos=pos  # unpacking
@@ -84,11 +92,10 @@ class scr:
         # erase the old data displayed in the field       
         bc=fd.fld_color if fd.fld_color else self.back_color
         fldwin.fill(bc)
-        tm.wait(15)
-        # the surface to be displayed is copied to top left 
-        # of the destination rectangle
-        fldwin.blit(valsrf,(fdx,fdy))
-        tm.wait(15)
+        # the surface to be displayed 
+        fldwin.blit(valsrf,(0,0)) 
+        self.win.blit(fldwin,(fdx,fdy))
+        screen.blit(self.win,(0,0))
         '''
         hadj=vadj=0   # assume no adjustment for the moment
         if horpos != "L":
@@ -107,11 +114,12 @@ class scr:
                 vadj += (fldrect.h-valrect.h)
         # scroll to new position
         fldwin.scroll(hadj,vadj)
-        '''
+
         winrect=self.win.get_rect()
         # positions it
         self.win.blit(fldwin,(fdx,fdy))
         tm.wait(15)
+        '''
         
     def display_fields(self):
         for f in self.fields:
@@ -134,9 +142,12 @@ class scr:
                 dlen=att.dat_length  # null by default
                 value = dob.ljust(dlen) if dlen else dob
             else:
-                value=dob  # full string by default when
-                           # there was no attribute instance
+#                value=dob  # full string by default when
+#                           # there was no attribute instance
+                #@@@ quick hack max length (should be using attribute in config...)
+                value = dob.ljust(16)  
             # string,antialias,color,background is transparent    
+            print "STRING VALUE is '%s'" % value
             vsrf=ren(value,True,(0,0,0))  # surface
             return (vsrf, positioning)
                        
@@ -151,9 +162,27 @@ class scr:
             # we have a definite problem here
             print >> sys.stderr,("data with tag %s has unknown type %s"
                                   % (dtg,typ)  )
-            raise ValueError           
+            raise ValueError
+            
+    def set_data_dir(self,dirname):
+        self.data_dir=dirname
+    
+    def set_data_file_name(self,dfn):
+        self.dat_name=dfn
+    
+    def get_data(self):
+        dfname=self.data_dir+'/'+self.dat_name
+        df=open(dfname)
+        self.ddict=json.load(df)
+        df.close() 
+        self.update_fields()
+           
     def update_field(self,name):
-        pass
+        dtg,val,typ,att=self.assg_dic[name]
+        # null tag means constant field, just leave alone
+        if dtg:
+            new_val=self.ddict[dtg]
+            self.assg_dic[name]=[dtg,new_val,typ,att]
         
     def update_fields(self):
         for f in self.fields:
@@ -165,7 +194,7 @@ class cfg:  # object containing configuration data
         self.jsdata=json.load(js_file)  
 
 class fld:  # describes a field for a screen
-    def __init__(self,tg,clr=None,ww=70,dd=10):
+    def __init__(self,tg,clr=None,ww=100,dd=20):
         self.tag=tg  # name of the field
         self.fld_width=ww
         self.fld_depth=dd
@@ -287,7 +316,7 @@ class assignments:
     # replace attribute object with a provided one
     def asg_attr(self,ftag,attr):
         try:
-            dt,dv,dp,attr=self.assigs[ftag]
+            dt,dv,dp,oldattr=self.assigs[ftag]
             self.assigs[ftag]=(dt,dv,dp,attr)
         except KeyError:
             print  >> stderr,"field tag not found for attr update",ftag,attr
@@ -311,6 +340,16 @@ class assignments:
             attr.set_format(fmt)
         except KeyError:
             print >> stderr,"cannot update fmt",ftag,fmt
+    
+    # replace data value
+    def replace_value(self, ftag, dv):
+        try:
+            dt,old_dv,dp,attr=self.assigs[ftag]
+            self.assigs[ftag]=(dt,dv,dp,attr)
+        except KeyError:
+            print  >> stderr,"field tag not found for data update",ftag,dv
+       
+    
         
     def config(self,cf):  # configuration object required
         pass
@@ -370,7 +409,7 @@ def testing(td=[]):
     global s,tdata
     print "testing, 1,2,3..."
     global tdata
-    import pdb; pdb.set_trace()
+#    import pdb; pdb.set_trace()
     bogus_config(fff=tdata)
     #print tdata, "from testing app"
     v=tdata[1]
@@ -414,12 +453,13 @@ def main(con="conf",dat="data",pic="pix",cf="wx.json"):
     pygame.init()
     screen=dsp.set_mode((320,240))  # the display object
     dsp.set_caption('Weather Demo')
-    defont=pygame.font.Font(None,23)
+    defont=pygame.font.Font(None,20)
+
     ren=defont.render
     load=pygame.image.load
         
     # run test code
-    testing(tdata)
+#    testing(tdata)
        
     # initialize screen
     # fields are defined
@@ -427,25 +467,33 @@ def main(con="conf",dat="data",pic="pix",cf="wx.json"):
     wxf=scr()
     ccff=con+'/'+cf
     wxf.config(ccff)
-    print "(fields)" , wxf.fields
-    
-    
-    """
+    #############print "(fields)" , wxf.fields
+    # set data directory and data file name
+    ddd="data"
+    wxf.set_data_dir(ddd)
+    wxf.set_data_file_name("wxdata.json")
+    wxf.get_data()
+    screen.fill((200,0,200))
+    dsp.flip()
+
+    print "::::::::::::",wxf.ddict
+#    import pdb; pdb.set_trace()
     # the main loop is a do-forever
     onward=True
-    while(onward):
-        # button check
+    while(onward):  
+        ###################### button check
         # data acquisition
-        # data format
-        # update screen data
+        wxf.get_data()
+        ###################### data format
         # display new screen data
-    
-        tm.wait(8000)
-        onward=False    
+        wxf.display_fields()
+        dsp.flip()
+        tm.wait(3000)
+#        onward=False    
         # exit test?
         # end of main loop
      
-    """
+
     print "I'm waiting..."
     tm.wait(wait_time)
     pygame.quit()
