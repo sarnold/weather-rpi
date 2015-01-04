@@ -80,6 +80,7 @@ class scr:
     def display_field(self,name):
         fd,fdx,fdy=self.fields[name]
         fldwin=fd.win
+	# data tag, data object, data type, data attribute
         dttg,dtob,dttp,dtatt=self.assg_dic[name]
         print "displaying %s: %s %s %s %s" % (name, dttg, dtob, dttp, dtatt)
         # get surface and centering
@@ -177,8 +178,10 @@ class scr:
            
     def update_field(self,name):
         dtg,val,typ,att=self.assg_dic[name]
-        new_val=self.ddict[dtg]
-        self.assg_dic[name]=[dtg,new_val,typ,att]
+        # null tag means constant field, just leave alone
+        if dtg:
+            new_val=self.ddict[dtg]
+            self.assg_dic[name]=[dtg,new_val,typ,att]
         
     def update_fields(self):
         for f in self.fields:
