@@ -108,8 +108,8 @@ $(document).ready(function(){
   update_settings_ui();
 
   // set some default content
-  $( "#tab-historical" ).html("<p>We get signal!</p>");
-  $( "#tab-windfield" ).html("<p>Main screen turn on!</p>");
+  $( "#tab-historical" ).html("<p>Placeholder - not yet implemented</p>");
+  $( "#tab-windfield" ).html("<p>Placeholder - not yet implemented</p>");
 
   // populate screen with initial data
   update_current_display();
