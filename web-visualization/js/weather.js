@@ -45,35 +45,35 @@ var defaults = [
 
   // keep track of stuff
   var current_temperature = 0;
-  var last_temperature = 0;
-  var highest_temperature = 0;
-  var lowest_temperature = 0;
-  var highest_temperature_timestamp = "";
-  var lowest_temperature_timestamp = "";
+  var last_temperature;
+  var highest_temperature;
+  var lowest_temperature;
+  var highest_temperature_timestamp;
+  var lowest_temperature_timestamp;
 
   // keep track of stuff
   var current_pressure = 0;
-  var last_pressure = 0;
-  var highest_pressure = 0;
-  var lowest_pressure = 0;
-  var highest_pressure_timestamp = "";
-  var lowest_pressure_timestamp = "";
+  var last_pressure;
+  var highest_pressure;
+  var lowest_pressure;
+  var highest_pressure_timestamp;
+  var lowest_pressure_timestamp;
 
   // keep track of stuff
   var current_humidity = 0;
-  var last_humidity = 0;
-  var highest_humidity = 0;
-  var lowest_humidity = 0;
-  var highest_humidity_timestamp = "";
-  var lowest_humidity_timestamp = "";
+  var last_humidity;
+  var highest_humidity;
+  var lowest_humidity;
+  var highest_humidity_timestamp;
+  var lowest_humidity_timestamp;
 
   // keep track of stuff
   var current_dewpoint = 0;
-  var last_dewpoint = 0;
-  var highest_dewpoint = 0;
-  var lowest_dewpoint = 0;
-  var highest_dewpoint_timestamp = "";
-  var lowest_dewpoint_timestamp = "";
+  var last_dewpoint;
+  var highest_dewpoint;
+  var lowest_dewpoint;
+  var highest_dewpoint_timestamp;
+  var lowest_dewpoint_timestamp;
 
   // Set to true to enable debugging output
   var DEBUG = true;
@@ -180,21 +180,36 @@ function load_historical_data()
   highest_temperature = $.cookie("highest_temperature");
   lowest_temperature = $.cookie("lowest_temperature");
   highest_temperature_timestamp = $.cookie("highest_temperature_timestamp");
+  console.log("date cookie load " + highest_temperature_timestamp + " type " + typeof highest_temperature_timestamp);
   lowest_temperature_timestamp = $.cookie("lowest_temperature_timestamp");
   if (typeof last_temperature === "undefined")  {
     last_temperature = 0;
+  } else {
+    last_temperature = parseFloat(last_temperature);
   }
   if (typeof highest_temperature === "undefined")  {
-    highest_temperature = 0;
+    console.log("HEY");
+    highest_temperature = Number.MIN_SAFE_INTEGER;
+  } else {
+    highest_temperature = parseFloat(highest_temperature);
   }
   if (typeof lowest_temperature === "undefined")  {
-    lowest_temperature = 0;
+    lowest_temperature = Number.MAX_SAFE_INTEGER;
+  } else {
+    lowest_temperature = parseFloat(lowest_temperature);
   }
   if (typeof highest_temperature_timestamp === "undefined")  {
-    highest_temperature_timestamp = "";
+    console.log("DATE UNDEFINED");
+    highest_temperature_timestamp = new Date();
+  } else {
+    console.log("NEED TO PARSE " + highest_temperature_timestamp);
+    highest_temperature_timestamp = new Date(highest_temperature_timestamp);
+    console.log("AFTER PARSE " + highest_temperature_timestamp);
   }
   if (typeof lowest_temperature_timestamp === "undefined")  {
-    lowest_temperature_timestamp = "";
+    lowest_temperature_timestamp = new Date();
+  } else {
+    lowest_temperature_timestamp =  new Date(lowest_temperature_timestamp);
   }
 
   last_pressure = $.cookie("last_pressure");
@@ -204,18 +219,28 @@ function load_historical_data()
   lowest_pressure_timestamp = $.cookie("lowest_pressure_timestamp");
   if (typeof last_pressure === "undefined")  {
     last_pressure = 0;
+  } else {
+    last_pressure = parseInt(last_pressure);
   }
   if (typeof highest_pressure === "undefined")  {
-    highest_pressure = 0;
+    highest_pressure = Number.MIN_SAFE_INTEGER;
+  } else {
+    highest_pressure = parseInt(highest_pressure);
   }
   if (typeof lowest_pressure === "undefined")  {
-    lowest_pressure = 0;
+    lowest_pressure = Number.MAX_SAFE_INTEGER;
+  } else {
+    lowest_pressure = parseInt(lowest_pressure);
   }
   if (typeof highest_pressure_timestamp === "undefined")  {
-    highest_pressure_timestamp = "";
+    highest_pressure_timestamp = new Date();
+  } else {
+    highest_pressure_timestamp = new Date(highest_pressure_timestamp);
   }
   if (typeof lowest_pressure_timestamp === "undefined")  {
-    lowest_pressure_timestamp = "";
+    lowest_pressure_timestamp = new Date();
+  } else {
+    lowest_pressure_timestamp = new Date(lowest_pressure_timestamp);
   }
 
   last_humidity = $.cookie("last_humidity");
@@ -225,18 +250,28 @@ function load_historical_data()
   lowest_humidity_timestamp = $.cookie("lowest_humidity_timestamp");
   if (typeof last_humidity === "undefined")  {
     last_humidity = 0;
+  } else {
+    last_humidity = parseFloat(last_humidity);
   }
   if (typeof highest_humidity === "undefined")  {
-    highest_humidity = 0;
+    highest_humidity = Number.MIN_SAFE_INTEGER;
+  } else {
+    highest_humidity = parseFloat(highest_humidity);
   }
   if (typeof lowest_humidity === "undefined")  {
-    lowest_humidity = 0;
+    lowest_humidity = Number.MAX_SAFE_INTEGER;
+  } else {
+    lowest_humidity = parseFloat(lowest_humidity);
   }
   if (typeof highest_humidity_timestamp === "undefined")  {
-    highest_humidity_timestamp = "";
+    highest_humidity_timestamp = new Date();
+  } else {
+    highest_humidity_timestamp = new Date(highest_humidity_timestamp);
   }
   if (typeof lowest_humidity_timestamp === "undefined")  {
-    lowest_humidity_timestamp = "";
+    lowest_humidity_timestamp = new Date();
+  } else {
+    lowest_humidity_timestamp = new Date(lowest_humidity_timestamp);
   }
 
   last_dewpoint = $.cookie("last_dewpoint");
@@ -246,19 +281,33 @@ function load_historical_data()
   lowest_dewpoint_timestamp = $.cookie("lowest_dewpoint_timestamp");
   if (typeof last_dewpoint === "undefined")  {
     last_dewpoint = 0;
+  } else {
+    last_dewpoint = parseFloat(last_dewpoint);
   }
   if (typeof highest_dewpoint === "undefined")  {
-    highest_dewpoint = 0;
+    highest_dewpoint = Number.MIN_SAFE_INTEGER;
+  } else {
+    highest_dewpoint = parseFloat(highest_dewpoint);
   }
   if (typeof lowest_dewpoint === "undefined")  {
-    lowest_dewpoint = 0;
+    lowest_dewpoint = Number.MAX_SAFE_INTEGER;
+  } else {
+    lowest_dewpoint = parseFloat(lowest_dewpoint);
   }
   if (typeof highest_dewpoint_timestamp === "undefined")  {
-    highest_dewpoint_timestamp = "";
+    highest_dewpoint_timestamp = new Date();
+  } else {
+    highest_dewpoint_timestamp = new Date(highest_dewpoint_timestamp);
   }
   if (typeof lowest_dewpoint_timestamp === "undefined")  {
-    lowest_dewpoint_timestamp = "";
+    lowest_dewpoint_timestamp = new Date();
+  } else {
+    lowest_dewpoint_timestamp = new Date(lowest_dewpoint_timestamp);
   }
+
+  console.log("t highesst " + highest_temperature + " type " + typeof highest_temperature);
+  console.log("p highesst " + highest_pressure + " type " + typeof highest_pressure);
+  console.log("date " + highest_temperature_timestamp + " type " + typeof highest_temperature_timestamp);
 }
 
 function setup_defaults()
@@ -373,6 +422,10 @@ function set_unit_labels()
   }
   $("#field_temperature_unit").text(unit_label);
   $("#field_dewpoint_unit").text(unit_label);
+  $("#field_temperature_high_unit").text(unit_label);
+  $("#field_temperature_low_unit").text(unit_label);
+  $("#field_dewpoint_high_unit").text(unit_label);
+  $("#field_dewpoint_low_unit").text(unit_label);
 }
 
 function current_tab_selected()
@@ -405,14 +458,14 @@ function convert_to_current_temperature_unit(deg_celsius)
 {
   var return_value = deg_celsius;
   var units = get_saved_setting("temperature_units");
-  LOG("convert " + return_value.toFixed(2) + " to " + units);
+  LOG("convert " + return_value + " to " + units);
   if (units === "fahrenheit")  {
     return_value = return_value * 1.8000 + 32.00;
   } else {
     // units are in celsius so if that is the selected unit then no conversion is necessary
     LOG("no conversion necessary");
   }
-  LOG("returning " + return_value.toFixed(2));
+  LOG("returning " + return_value);
   return return_value;
 }
 
@@ -447,6 +500,7 @@ function force_update(completion_handler)
 function process_observations(data)
 {
   LOG(data);
+
   // first decode all the things!!
   var version = data["ver-tag"];
   var temperature;
@@ -454,6 +508,7 @@ function process_observations(data)
   var humidity;
   var dewpoint;
   var datetime;
+  var update_date;
 
   if (version == 1) {
     LOG("version 1 data detected");
@@ -463,11 +518,7 @@ function process_observations(data)
     humidity = parseFloat(data["sht-hum"]);
     dewpoint = parseFloat(data["sht-dew"]);
   }
-
-  $("#field_temperature").text(convert_to_current_temperature_unit(temperature).toFixed(2));
-  $("#field_pressure").text(pressure);
-  $("#field_humidity").text(humidity.toFixed(2));
-  $("#field_dewpoint").text(dewpoint.toFixed(2));
+  update_date = datetime.substring(0, datetime.indexOf('.')); datetime;
 
   // now compute trends
   temperature_trend = (temperature > last_temperature ? 1 : (temperature < last_temperature ? -1 : 0));
@@ -475,7 +526,84 @@ function process_observations(data)
   humidity_trend = (humidity > last_humidity ? 1 : (humidity < last_humidity ? -1 : 0));
   dewpoint_trend = (dewpoint > last_dewpoint ? 1 : (dewpoint < last_dewpoint ? -1 : 0));
 
-  // display it
+  // now store the last-values
+  last_temperature = temperature;
+  last_pressure = pressure;
+  last_dewpoint = dewpoint;
+  last_humidity = humidity;
+
+  $.cookie("last_temperature", last_temperature);
+  $.cookie("last_pressure", last_pressure);
+  $.cookie("last_humidity", last_humidity);
+  $.cookie("last_dewpoint", last_dewpoint);
+
+  // now handle min/max
+  if (temperature < lowest_temperature)  {
+    lowest_temperature = temperature;
+    lowest_temperature_timestamp = Date.parseExact(update_date, "yyyy-MM-dd hh:mm:ss");
+  }
+  if (temperature > highest_temperature)  {
+    highest_temperature = temperature;
+    highest_temperature_timestamp = Date.parseExact(update_date, "yyyy-MM-dd hh:mm:ss");
+  }
+
+  if (pressure < lowest_pressure)  {
+    lowest_pressure = pressure;
+    lowest_pressure_timestamp = Date.parseExact(update_date, "yyyy-MM-dd hh:mm:ss");
+  }
+  if (pressure > highest_pressure)  {
+    highest_pressure = pressure;
+    highest_pressure_timestamp = Date.parseExact(update_date, "yyyy-MM-dd hh:mm:ss");
+  }
+
+  if (humidity < lowest_humidity)  {
+    lowest_humidity = humidity;
+    lowest_humidity_timestamp = Date.parseExact(update_date, "yyyy-MM-dd hh:mm:ss");
+  }
+  if (humidity > highest_humidity)  {
+    highest_humidity = humidity;
+    highest_humidity_timestamp = Date.parseExact(update_date, "yyyy-MM-dd hh:mm:ss");
+  }
+
+  if (dewpoint < lowest_dewpoint)  {
+    lowest_dewpoint = dewpoint;
+    lowest_dewpoint_timestamp = Date.parseExact(update_date, "yyyy-MM-dd hh:mm:ss");
+  }
+  if (dewpoint > highest_dewpoint)  {
+    highest_dewpoint = dewpoint;
+    highest_dewpoint_timestamp = Date.parseExact(update_date, "yyyy-MM-dd hh:mm:ss");
+  }
+
+  console.log("update_date " + update_date + " " + typeof update_date);
+  console.log("temp hi " + highest_temperature_timestamp + " " + typeof highest_temperature_timestamp);
+
+  // now save them out
+  $.cookie("lowest_temperature", lowest_temperature);
+  $.cookie("highest_temperature", highest_temperature);
+  $.cookie("lowest_temperature_timestamp", lowest_temperature_timestamp);
+  $.cookie("highest_temperature_timestamp", highest_temperature_timestamp);
+
+  $.cookie("lowest_pressure", lowest_pressure);
+  $.cookie("highest_pressure", highest_pressure);
+  $.cookie("lowest_pressure_timestamp", lowest_pressure_timestamp);
+  $.cookie("highest_pressure_timestamp", highest_pressure_timestamp);
+
+  $.cookie("lowest_humidity", lowest_humidity);
+  $.cookie("highest_humidity", highest_humidity);
+  $.cookie("lowest_humidity_timestamp", lowest_humidity_timestamp);
+  $.cookie("highest_humidity_timestamp", highest_humidity_timestamp);
+
+  $.cookie("lowest_dewpoint", lowest_dewpoint);
+  $.cookie("highest_dewpoint", highest_dewpoint);
+  $.cookie("lowest_dewpoint_timestamp", lowest_dewpoint_timestamp);
+  $.cookie("highest_dewpoint_timestamp", highest_dewpoint_timestamp);
+
+  // lastly update the display
+  $("#field_temperature").text(convert_to_current_temperature_unit(temperature).toFixed(2));
+  $("#field_pressure").text(pressure);
+  $("#field_humidity").text(humidity.toFixed(2));
+  $("#field_dewpoint").text(dewpoint.toFixed(2));
+
   switch(temperature_trend)  {
     case -1: $("#trend_temperature").html("&#8595;"); break;
     case 0: $("#trend_temperature").html("&#8213;"); break;
@@ -500,6 +628,17 @@ function process_observations(data)
     case 1: $("#trend_dewpoint").html("&#8593;"); break;
   }
 
+  $("#field_temperature_high").text(convert_to_current_temperature_unit(highest_temperature).toFixed(2));
+  $("#field_pressure_high").text(highest_pressure);
+  console.log(typeof highest_humidity);
+  $("#field_humidity_high").text(highest_humidity.toFixed(2));
+  $("#field_dewpoint_high").text(highest_dewpoint.toFixed(2));
+
+  $("#field_temperature_low").text(convert_to_current_temperature_unit(lowest_temperature).toFixed(2));
+  $("#field_pressure_low").text(lowest_pressure);
+  $("#field_humidity_low").text(lowest_humidity.toFixed(2));
+  $("#field_dewpoint_low").text(lowest_dewpoint.toFixed(2));
+
   // display update date
   // example: 2014-12-31 01:52:32.414871
   // docs: https://code.google.com/p/datejs/wiki/FormatSpecifiers
@@ -512,76 +651,14 @@ function process_observations(data)
   LOG(typeof update_date);
   LOG(update_date);
   $("#field_last_updated").html(get_date_string(update_date));
-
-  // now store the last-values
-  last_temperature = temperature;
-  last_pressure = pressure;
-  last_dewpoint = dewpoint;
-  last_humidity = humidity;
-
-  $.cookie("last_temperature", last_temperature);
-  $.cookie("last_pressure", last_pressure);
-  $.cookie("last_humidity", last_humidity);
-  $.cookie("last_dewpoint", last_dewpoint);
-
-  // now handle min/max
-  if (temperature < lowest_temperature)  {
-    lowest_temperature = temperature;
-    lowest_temperature_timestamp = update_date;
-  }
-  if (temperature > highest_temperature)  {
-    highest_temperature = temperature;
-    highest_temperature_timestamp = update_date;
-  }
-
-  if (pressure < lowest_pressure)  {
-    lowest_pressure = pressure;
-    lowest_pressure_timestamp = update_date;
-  }
-  if (pressure > highest_pressure)  {
-    highest_pressure = pressure;
-    highest_pressure_timestamp = update_date;
-  }
-
-  if (humidity < lowest_humidity)  {
-    lowest_humidity = humidity;
-    lowest_humidity_timestamp = update_date;
-  }
-  if (humidity > highest_humidity)  {
-    highest_humidity = humidity;
-    highest_humidity_timestamp = update_date;
-  }
-
-  if (dewpoint < lowest_dewpoint)  {
-    lowest_dewpoint = dewpoint;
-    lowest_dewpoint_timestamp = update_date;
-  }
-  if (dewpoint > highest_dewpoint)  {
-    highest_dewpoint = dewpoint;
-    highest_dewpoint_timestamp = update_date;
-  }
-
-  // now save them out
-  $.cookie("lowest_temperature", lowest_temperature);
-  $.cookie("highest_temperature", highest_temperature);
-  $.cookie("lowest_temperature_timestamp", lowest_temperature_timestamp);
-  $.cookie("highest_temperature_timestamp", highest_temperature_timestamp);
-
-  $.cookie("lowest_pressure", lowest_pressure);
-  $.cookie("highest_pressure", highest_pressure);
-  $.cookie("lowest_pressure_timestamp", lowest_pressure_timestamp);
-  $.cookie("highest_pressure_timestamp", highest_pressure_timestamp);
-
-  $.cookie("lowest_humidity", lowest_humidity);
-  $.cookie("highest_humidity", highest_humidity);
-  $.cookie("lowest_humidity_timestamp", lowest_humidity_timestamp);
-  $.cookie("highest_humidity_timestamp", highest_humidity_timestamp);
-
-  $.cookie("lowest_dewpoint", lowest_dewpoint);
-  $.cookie("highest_dewpoint", highest_dewpoint);
-  $.cookie("lowest_dewpoint_timestamp", lowest_dewpoint_timestamp);
-  $.cookie("highest_dewpoint_timestamp", highest_dewpoint_timestamp);
-
+  $("#field_temperature_high_timestamp").html(get_date_string(highest_temperature_timestamp));
+  $("#field_pressure_high_timestamp").html(get_date_string(highest_pressure_timestamp));
+  $("#field_humidity_high_timestamp").html(get_date_string(highest_humidity_timestamp));
+  $("#field_dewpoint_high_timestamp").html(get_date_string(highest_dewpoint_timestamp));
+  $("#field_temperature_low_timestamp").html(get_date_string(lowest_temperature_timestamp));
+  $("#field_pressure_low_timestamp").html(get_date_string(lowest_pressure_timestamp));
+  $("#field_humidity_low_timestamp").html(get_date_string(lowest_humidity_timestamp));
+  $("#field_dewpoint_low_timestamp").html(get_date_string(lowest_dewpoint_timestamp));
 }
 
 function force_update_old(completion_handler)

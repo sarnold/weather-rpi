@@ -36,88 +36,113 @@
       <li><a href="#tab-windfield">Wind Field</a></li>
       <li><a href="#tab-settings">Settings</a></li>
     </ul>
-    
-    <div id="tab-current" align="center">
-      <table border="0" cellpadding="20">
-        <tr>
-          <td align="center"><h1>TEMPERATURE</h1></td>
-          <td align="center"><h1>PRESSURE</h1></td>
-          <td align="center"><h1>HUMIDITY</h1></td>
-          <td align="center"><h1>DEWPOINT</h1></td>
-        </tr>
-        <tr>
-          <td align="center"><h1><span id="field_temperature">--</span>&deg;<span id="field_temperature_unit">-</span> <span ID="trend_temperature">&#8213;</span></h1></td>
-          <td align="center"><h1><span id="field_pressure">--</span> Pa <span id="trend_pressure">&#8213;</span></h1></td>
-          <td align="center"><h1><span id="field_humidity">--</span>% <span ID="trend_humidity">&#8213;</span></h1></td>
-          <td align="center"><h1><span id="field_dewpoint">--</span>&deg;<span id="field_dewpoint_unit">-</span> <span ID="trend_dewpoint">&#8213;</span></h1></td>
-        </tr>
-      </table>
-      <div class="ui-widget" style="display: none;">
-        <div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"> 
-          <p>
-            <span class="ui-icon ui-icon-alert" 
-            style="float: left; margin-right: .3em;"></span>
-            <strong>Alert:</strong> <span id="x-error-text">---</span>
-          </p>
-        </div>
-      </div>
-      <br />
-      Last updated <span id="field_last_updated">---</span><br /><br />
-      <div id="button-update" class="ui-wait-button">Update</div>
-    </div>
-    
-    <div id="tab-historical">
-    </div>
-    
-    <div id="tab-windfield">
-    </div>
-    
-    <div id="tab-settings">
-      
-      <div id="settings_accordion">
-        <h3>Time format</h3>
-        <div>
-          <form id="form-time" action="">
-            <input type="radio" name="time_format" value="local">Local<br>
-            <input type="radio" name="time_format" value="utc">UTC
-          </form>
-        </div>
-        
-        <h3>Temperature units</h3>
-        <div>
-          <form id="form-temperature_units" action="">
-            <input type="radio" name="temperature_units" value="celsius">Celsius<br>
-            <input type="radio" name="temperature_units" value="fahrenheit">Fahrenheit
-          </form>
+
+    <div id="tab-current">
+      <div align="center">
+        <table border="0" cellpadding="20">
+          <tr>
+            <td align="center"></td>
+            <td align="center"><h1>TEMPERATURE</h1></td>
+            <td align="center"><h1>PRESSURE</h1></td>
+            <td align="center"><h1>HUMIDITY</h1></td>
+            <td align="center"><h1>DEWPOINT</h1></td>
+          </tr>
+          <tr>
+            <td align="center"><h1>CURRENT</h1></td>
+            <td align="center"><h1><span id="field_temperature">--</span>&deg;<span id="field_temperature_unit">-</span> <span ID="trend_temperature">&#8213;</span></h1></td>
+            <td align="center"><h1><span id="field_pressure">--</span> Pa <span id="trend_pressure">&#8213;</span></h1></td>
+            <td align="center"><h1><span id="field_humidity">--</span>% <span ID="trend_humidity">&#8213;</span></h1></td>
+            <td align="center"><h1><span id="field_dewpoint">--</span>&deg;<span id="field_dewpoint_unit">-</span> <span ID="trend_dewpoint">&#8213;</span></h1></td>
+          </tr>
+
+          <tr>
+            <td align="center"><h1>HIGH</h1></td>
+            <td align="center"><h1><span id="field_temperature_high">--</span>&deg;<span id="field_temperature_high_unit">-</span></h1><h3>as of <span id="field_temperature_high_timestamp">---</span></h3></td>
+            <td align="center"><h1><span id="field_pressure_high">--</span> Pa</h1><h3>as of <span id="field_pressure_high_timestamp">---</span></h3></td>
+            <td align="center"><h1><span id="field_humidity_high">--</span>%</h1><h3>as of <span ID="field_humidity_high_timestamp">---</span></h3></td>
+            <td align="center"><h1><span id="field_dewpoint_high">--</span>&deg;<span id="field_dewpoint_high_unit">-</span></h1><h3>as of <span ID="field_dewpoint_high_timestamp">---</span></h3></td>
+          </tr>
+
+          <TR>
+            <tr>
+              <td align="center"><h1>LOW</h1></td>
+              <td align="center"><h1><span id="field_temperature_low">--</span>&deg;<span id="field_temperature_low_unit">-</span></h1><h3>as of <span id="field_temperature_low_timestamp">---</span></h3></td>
+              <td align="center"><h1><span id="field_pressure_low">--</span> Pa</h1><h3>as of <span id="field_pressure_low_timestamp">---</span></h3></td>
+              <td align="center"><h1><span id="field_humidity_low">--</span>%</h1><h3>as of <span ID="field_humidity_low_timestamp">---</span></h3></td>
+              <td align="center"><h1><span id="field_dewpoint_low">--</span>&deg;<span id="field_dewpoint_low_unit">-</span></h1><h3>as of <span ID="field_dewpoint_low_timestamp">---</span></h3></td>
+            </tr>
+
+          </table>
         </div>
 
-        <h3>Auto-refresh current observation data</h3>
-        <div>
-          <form id="form-refresh_interval" action="">
-            <input type="radio" name="refresh_interval" value="0">disabled<br>
-            <input type="radio" name="refresh_interval" value="10">10 seconds<br>
-            <input type="radio" name="refresh_interval" value="30">30 seconds<br>
-            <input type="radio" name="refresh_interval" value="60">1 minute<br>
-            <input type="radio" name="refresh_interval" value="120">2 minutes<br>
-            <input type="radio" name="refresh_interval" value="300">5 minutes<br>
-            <input type="radio" name="refresh_interval" value="600">10 minutes<br>
-          </form>
+        <div class="ui-widget" style="display: none;">
+          <div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"> 
+            <p>
+              <span class="ui-icon ui-icon-alert" 
+              style="float: left; margin-right: .3em;"></span>
+              <strong>Alert:</strong> <span id="x-error-text">---</span>
+            </p>
+          </div>
+        </div>
+        <br />
+        <div align="center">
+          Last updated <span id="field_last_updated">---</span><br /><br />
+          <div id="button-update" class="ui-wait-button">Update</div>
         </div>
       </div>
-      <p>
-        <span id="button-save_settings">
-          Save
-        </span>
-        <span id="save_success" style="display:none">
-          Settings have been saved.
-        </span>
-      </p>
-    </div>
-  </div>
-  
-  <div id="error-dialog" title="Error">
-    <p><span id="error-text" /></p>
-  </div>
 
-</body>
-</html>
+      <div id="tab-historical">
+      </div>
+
+      <div id="tab-windfield">
+      </div>
+
+      <div id="tab-settings">
+
+        <div id="settings_accordion">
+          <h3>Time format</h3>
+          <div>
+            <form id="form-time" action="">
+              <input type="radio" name="time_format" value="local">Local<br>
+              <input type="radio" name="time_format" value="utc">UTC
+            </form>
+          </div>
+
+          <h3>Temperature units</h3>
+          <div>
+            <form id="form-temperature_units" action="">
+              <input type="radio" name="temperature_units" value="celsius">Celsius<br>
+              <input type="radio" name="temperature_units" value="fahrenheit">Fahrenheit
+            </form>
+          </div>
+
+          <h3>Auto-refresh current observation data</h3>
+          <div>
+            <form id="form-refresh_interval" action="">
+              <input type="radio" name="refresh_interval" value="0">disabled<br>
+              <input type="radio" name="refresh_interval" value="10">10 seconds<br>
+              <input type="radio" name="refresh_interval" value="30">30 seconds<br>
+              <input type="radio" name="refresh_interval" value="60">1 minute<br>
+              <input type="radio" name="refresh_interval" value="120">2 minutes<br>
+              <input type="radio" name="refresh_interval" value="300">5 minutes<br>
+              <input type="radio" name="refresh_interval" value="600">10 minutes<br>
+            </form>
+          </div>
+        </div>
+        <p>
+          <span id="button-save_settings">
+            Save
+          </span>
+          <span id="save_success" style="display:none">
+            Settings have been saved.
+          </span>
+        </p>
+      </div>
+    </div>
+
+    <div id="error-dialog" title="Error">
+      <p><span id="error-text" /></p>
+    </div>
+
+  </body>
+  </html>
