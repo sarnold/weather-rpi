@@ -78,10 +78,10 @@ class scr:
         self.assg_dic=asgs
                    
     def display_field(self,name):
-        print "displaying %s" % name
         fd,fdx,fdy=self.fields[name]
         fldwin=fd.win
         dttg,dtob,dttp,dtatt=self.assg_dic[name]
+        print "displaying %s: %s %s %s %s" % (name, dttg, dtob, dttp, dtatt)
         # get surface and centering
         valsrf,pos=self.get_val_srf(dttg,dtob,dttp,dtatt)
         horpos,verpos=pos  # unpacking
@@ -91,13 +91,8 @@ class scr:
         # erase the old data displayed in the field       
         bc=fd.fld_color if fd.fld_color else self.back_color
         fldwin.fill(bc)
-        tm.wait(200)
-        # the surface to be displayed is copied to top left 
-        # of the destination rectangle
-        fldwin.blit(valsrf,(fdx,fdy))
-        tm.wait(200)
-        self.win.blit(fldwin,(fdx,fdy))
-        tm.wait(300)
+        # the surface to be displayed 
+        self.win.blit(valsrf,(fdx,fdy)) 
         screen.blit(self.win,(0,0))
         dsp.flip()
         tm.wait(200)
@@ -119,11 +114,12 @@ class scr:
                 vadj += (fldrect.h-valrect.h)
         # scroll to new position
         fldwin.scroll(hadj,vadj)
-        '''
+
         winrect=self.win.get_rect()
         # positions it
         self.win.blit(fldwin,(fdx,fdy))
         tm.wait(15)
+        '''
         
     def display_fields(self):
         for f in self.fields:
@@ -149,6 +145,7 @@ class scr:
                 value=dob  # full string by default when
                            # there was no attribute instance
             # string,antialias,color,background is transparent    
+            print "STRING VALUE is '%s'" % value
             vsrf=ren(value,True,(0,0,0))  # surface
             return (vsrf, positioning)
                        
@@ -176,6 +173,7 @@ class scr:
         df=open(dfname)
         self.ddict=json.load(df)
         df.close() 
+        self.update_fields()
            
     def update_field(self,name):
         dtg,val,typ,att=self.assg_dic[name]
@@ -407,7 +405,7 @@ def testing(td=[]):
     global s,tdata
     print "testing, 1,2,3..."
     global tdata
-    import pdb; pdb.set_trace()
+#    import pdb; pdb.set_trace()
     bogus_config(fff=tdata)
     #print tdata, "from testing app"
     v=tdata[1]
@@ -452,11 +450,12 @@ def main(con="conf",dat="data",pic="pix",cf="wx.json"):
     screen=dsp.set_mode((320,240))  # the display object
     dsp.set_caption('Weather Demo')
     defont=pygame.font.Font(None,23)
+
     ren=defont.render
     load=pygame.image.load
         
     # run test code
-    testing(tdata)
+#    testing(tdata)
        
     # initialize screen
     # fields are defined
@@ -466,12 +465,15 @@ def main(con="conf",dat="data",pic="pix",cf="wx.json"):
     wxf.config(ccff)
     #############print "(fields)" , wxf.fields
     # set data directory and data file name
-    ddd="/home/nll/work/embed/rpi/wx/weather-rpi/local-display/data"
+    ddd="data"
     wxf.set_data_dir(ddd)
     wxf.set_data_file_name("wxdata.json")
     wxf.get_data()
+    screen.fill((200,0,200))
+    dsp.flip()
+
     print "::::::::::::",wxf.ddict
-    import pdb; pdb.set_trace()
+#    import pdb; pdb.set_trace()
     # the main loop is a do-forever
     onward=True
     while(onward):  
@@ -479,21 +481,10 @@ def main(con="conf",dat="data",pic="pix",cf="wx.json"):
         # data acquisition
         wxf.get_data()
         ###################### data format
-        # update screen data
-        screen.fill((100,0,200))
-        tm.wait(500)
         # display new screen data
         wxf.display_fields()
-        pig=ren('hello from the pig',True,(0,0,200))
-        tm.wait(300)
-        screen.blit(pig,(100,100))
-        #dsp.blit(pig,(100,100))
-        tm.wait(5000)
-        screen.blit(wxf.win,(0,0))
-        tm.wait(500)
         dsp.flip()
-        tm.wait(8000)
-        onward=False    
+#        onward=False    
         # exit test?
         # end of main loop
      
