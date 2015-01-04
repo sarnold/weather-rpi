@@ -93,10 +93,9 @@ class scr:
         bc=fd.fld_color if fd.fld_color else self.back_color
         fldwin.fill(bc)
         # the surface to be displayed 
-        self.win.blit(valsrf,(fdx,fdy)) 
+        fldwin.blit(valsrf,(0,0)) 
+        self.win.blit(fldwin,(fdx,fdy))
         screen.blit(self.win,(0,0))
-        dsp.flip()
-        tm.wait(200)
         '''
         hadj=vadj=0   # assume no adjustment for the moment
         if horpos != "L":
@@ -143,8 +142,10 @@ class scr:
                 dlen=att.dat_length  # null by default
                 value = dob.ljust(dlen) if dlen else dob
             else:
-                value=dob  # full string by default when
-                           # there was no attribute instance
+#                value=dob  # full string by default when
+#                           # there was no attribute instance
+                #@@@ quick hack max length (should be using attribute in config...)
+                value = dob.ljust(16)  
             # string,antialias,color,background is transparent    
             print "STRING VALUE is '%s'" % value
             vsrf=ren(value,True,(0,0,0))  # surface
@@ -193,7 +194,7 @@ class cfg:  # object containing configuration data
         self.jsdata=json.load(js_file)  
 
 class fld:  # describes a field for a screen
-    def __init__(self,tg,clr=None,ww=70,dd=10):
+    def __init__(self,tg,clr=None,ww=100,dd=20):
         self.tag=tg  # name of the field
         self.fld_width=ww
         self.fld_depth=dd
@@ -452,7 +453,7 @@ def main(con="conf",dat="data",pic="pix",cf="wx.json"):
     pygame.init()
     screen=dsp.set_mode((320,240))  # the display object
     dsp.set_caption('Weather Demo')
-    defont=pygame.font.Font(None,23)
+    defont=pygame.font.Font(None,20)
 
     ren=defont.render
     load=pygame.image.load
@@ -487,6 +488,7 @@ def main(con="conf",dat="data",pic="pix",cf="wx.json"):
         # display new screen data
         wxf.display_fields()
         dsp.flip()
+        tm.wait(3000)
 #        onward=False    
         # exit test?
         # end of main loop
