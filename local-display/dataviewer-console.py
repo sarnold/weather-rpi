@@ -39,6 +39,9 @@ class scr:
         self.fields={}
         # which data to which fields and how
         self.assg_dic={}
+        self.data_dir=''
+        self.dat_name=''
+        self.ddict={}
         
     def config(self,cf):  # name of json config file required
         jj=open(cf,'r')
@@ -48,8 +51,12 @@ class scr:
         print 'cfg:',cfg
         dsp_dat=cfg[0]["DSP"]
         scr_dat=dsp_dat[1:7]
-        fld_dat=dsp_dat[8]
-        self.fields=fld_dat
+        fld_dat=dsp_dat[8]['dsp_fields']
+        for frec in fld_dat:
+            zorch,w,d=fld_dat[frec]
+            fff=fld(frec)
+            new_fd=(fff,w,d)
+            self.fields[frec]=new_fd
         dsc_dat=cfg[1]["DESC"]
         asg_dat=cfg[2]["ASG"]
         self.set_assignments(asg_dat)
@@ -84,11 +91,16 @@ class scr:
         # erase the old data displayed in the field       
         bc=fd.fld_color if fd.fld_color else self.back_color
         fldwin.fill(bc)
-        tm.wait(15)
+        tm.wait(200)
         # the surface to be displayed is copied to top left 
         # of the destination rectangle
         fldwin.blit(valsrf,(fdx,fdy))
-        tm.wait(15)
+        tm.wait(200)
+        self.win.blit(fldwin,(fdx,fdy))
+        tm.wait(300)
+        screen.blit(self.win,(0,0))
+        dsp.flip()
+        tm.wait(200)
         '''
         hadj=vadj=0   # assume no adjustment for the moment
         if horpos != "L":
@@ -151,9 +163,24 @@ class scr:
             # we have a definite problem here
             print >> sys.stderr,("data with tag %s has unknown type %s"
                                   % (dtg,typ)  )
-            raise ValueError           
+            raise ValueError
+            
+    def set_data_dir(self,dirname):
+        self.data_dir=dirname
+    
+    def set_data_file_name(self,dfn):
+        self.dat_name=dfn
+    
+    def get_data(self):
+        dfname=self.data_dir+'/'+self.dat_name
+        df=open(dfname)
+        self.ddict=json.load(df)
+        df.close() 
+           
     def update_field(self,name):
-        pass
+        dtg,val,typ,att=self.assg_dic[name]
+        new_val=self.ddict[dtg]
+        self.assg_dic[name]=[dtg,new_val,typ,att]
         
     def update_fields(self):
         for f in self.fields:
@@ -287,7 +314,7 @@ class assignments:
     # replace attribute object with a provided one
     def asg_attr(self,ftag,attr):
         try:
-            dt,dv,dp,attr=self.assigs[ftag]
+            dt,dv,dp,oldattr=self.assigs[ftag]
             self.assigs[ftag]=(dt,dv,dp,attr)
         except KeyError:
             print  >> stderr,"field tag not found for attr update",ftag,attr
@@ -311,6 +338,16 @@ class assignments:
             attr.set_format(fmt)
         except KeyError:
             print >> stderr,"cannot update fmt",ftag,fmt
+    
+    # replace data value
+    def replace_value(self, ftag, dv):
+        try:
+            dt,old_dv,dp,attr=self.assigs[ftag]
+            self.assigs[ftag]=(dt,dv,dp,attr)
+        except KeyError:
+            print  >> stderr,"field tag not found for data update",ftag,dv
+       
+    
         
     def config(self,cf):  # configuration object required
         pass
@@ -427,25 +464,40 @@ def main(con="conf",dat="data",pic="pix",cf="wx.json"):
     wxf=scr()
     ccff=con+'/'+cf
     wxf.config(ccff)
-    print "(fields)" , wxf.fields
-    
-    
-    """
+    #############print "(fields)" , wxf.fields
+    # set data directory and data file name
+    ddd="/home/nll/work/embed/rpi/wx/weather-rpi/local-display/data"
+    wxf.set_data_dir(ddd)
+    wxf.set_data_file_name("wxdata.json")
+    wxf.get_data()
+    print "::::::::::::",wxf.ddict
+    import pdb; pdb.set_trace()
     # the main loop is a do-forever
     onward=True
-    while(onward):
-        # button check
+    while(onward):  
+        ###################### button check
         # data acquisition
-        # data format
+        wxf.get_data()
+        ###################### data format
         # update screen data
+        screen.fill((100,0,200))
+        tm.wait(500)
         # display new screen data
-    
+        wxf.display_fields()
+        pig=ren('hello from the pig',True,(0,0,200))
+        tm.wait(300)
+        screen.blit(pig,(100,100))
+        #dsp.blit(pig,(100,100))
+        tm.wait(5000)
+        screen.blit(wxf.win,(0,0))
+        tm.wait(500)
+        dsp.flip()
         tm.wait(8000)
         onward=False    
         # exit test?
         # end of main loop
      
-    """
+
     print "I'm waiting..."
     tm.wait(wait_time)
     pygame.quit()
