@@ -37,48 +37,44 @@
 // bar = &#8213; &#x2015;
 
 // Default configuration options
-var defaults = [
-["time_format", "local", "form-time"],
-  ["temperature_units", "celsius", "form-temperature_units"],
-  ["refresh_interval", "60", "form-refresh_interval"]
-  ];
+var defaults = [["time_format", "local", "form-time"], ["temperature_units", "celsius", "form-temperature_units"], ["refresh_interval", "60", "form-refresh_interval"]];
 
-  // keep track of stuff
-  var current_temperature = 0;
-  var last_temperature;
-  var highest_temperature;
-  var lowest_temperature;
-  var highest_temperature_timestamp;
-  var lowest_temperature_timestamp;
+// keep track of stuff
+var current_temperature = 0;
+var last_temperature;
+var highest_temperature;
+var lowest_temperature;
+var highest_temperature_timestamp;
+var lowest_temperature_timestamp;
 
-  // keep track of stuff
-  var current_pressure = 0;
-  var last_pressure;
-  var highest_pressure;
-  var lowest_pressure;
-  var highest_pressure_timestamp;
-  var lowest_pressure_timestamp;
+// keep track of stuff
+var current_pressure = 0;
+var last_pressure;
+var highest_pressure;
+var lowest_pressure;
+var highest_pressure_timestamp;
+var lowest_pressure_timestamp;
 
-  // keep track of stuff
-  var current_humidity = 0;
-  var last_humidity;
-  var highest_humidity;
-  var lowest_humidity;
-  var highest_humidity_timestamp;
-  var lowest_humidity_timestamp;
+// keep track of stuff
+var current_humidity = 0;
+var last_humidity;
+var highest_humidity;
+var lowest_humidity;
+var highest_humidity_timestamp;
+var lowest_humidity_timestamp;
 
-  // keep track of stuff
-  var current_dewpoint = 0;
-  var last_dewpoint;
-  var highest_dewpoint;
-  var lowest_dewpoint;
-  var highest_dewpoint_timestamp;
-  var lowest_dewpoint_timestamp;
+// keep track of stuff
+var current_dewpoint = 0;
+var last_dewpoint;
+var highest_dewpoint;
+var lowest_dewpoint;
+var highest_dewpoint_timestamp;
+var lowest_dewpoint_timestamp;
 
-  // Set to true to enable debugging output
-  var DEBUG = true;
+// Set to true to enable debugging output
+var DEBUG = false;
 
-  // debug logging
+// debug logging
 function LOG(msg)
 {
   if (DEBUG)  {
@@ -180,7 +176,7 @@ function load_historical_data()
   highest_temperature = $.cookie("highest_temperature");
   lowest_temperature = $.cookie("lowest_temperature");
   highest_temperature_timestamp = $.cookie("highest_temperature_timestamp");
-  console.log("date cookie load " + highest_temperature_timestamp + " type " + typeof highest_temperature_timestamp);
+  LOG("date cookie load " + highest_temperature_timestamp + " type " + typeof highest_temperature_timestamp);
   lowest_temperature_timestamp = $.cookie("lowest_temperature_timestamp");
   if (typeof last_temperature === "undefined")  {
     last_temperature = 0;
@@ -188,7 +184,7 @@ function load_historical_data()
     last_temperature = parseFloat(last_temperature);
   }
   if (typeof highest_temperature === "undefined")  {
-    console.log("HEY");
+    LOG("HEY");
     highest_temperature = Number.MIN_SAFE_INTEGER;
   } else {
     highest_temperature = parseFloat(highest_temperature);
@@ -199,12 +195,12 @@ function load_historical_data()
     lowest_temperature = parseFloat(lowest_temperature);
   }
   if (typeof highest_temperature_timestamp === "undefined")  {
-    console.log("DATE UNDEFINED");
+    LOG("DATE UNDEFINED");
     highest_temperature_timestamp = new Date();
   } else {
-    console.log("NEED TO PARSE " + highest_temperature_timestamp);
+    LOG("NEED TO PARSE " + highest_temperature_timestamp);
     highest_temperature_timestamp = new Date(highest_temperature_timestamp);
-    console.log("AFTER PARSE " + highest_temperature_timestamp);
+    LOG("AFTER PARSE " + highest_temperature_timestamp);
   }
   if (typeof lowest_temperature_timestamp === "undefined")  {
     lowest_temperature_timestamp = new Date();
@@ -305,9 +301,9 @@ function load_historical_data()
     lowest_dewpoint_timestamp = new Date(lowest_dewpoint_timestamp);
   }
 
-  console.log("t highesst " + highest_temperature + " type " + typeof highest_temperature);
-  console.log("p highesst " + highest_pressure + " type " + typeof highest_pressure);
-  console.log("date " + highest_temperature_timestamp + " type " + typeof highest_temperature_timestamp);
+  LOG("t highesst " + highest_temperature + " type " + typeof highest_temperature);
+  LOG("p highesst " + highest_pressure + " type " + typeof highest_pressure);
+  LOG("date " + highest_temperature_timestamp + " type " + typeof highest_temperature_timestamp);
 }
 
 function setup_defaults()
@@ -384,6 +380,7 @@ function set_setting(name, value)
 
 function get_date_string(d)
 {
+  LOG("get_date_string called with type=" + typeof d + ": " + d);
   var time_format = $.cookie("time_format");
 
   if (time_format === "utc")  {
@@ -477,7 +474,7 @@ function force_update(completion_handler)
   toggleButton("#button-update");
 
   var jqxhr = $.getJSON( "wxdata2.json", function(data) {
-    console.log( "success" );
+    LOG( "success" );
     LOG("SUCCESS, received data: " + JSON.stringify(data, null, 4));
     process_observations(data);
   })
@@ -519,6 +516,9 @@ function process_observations(data)
     dewpoint = parseFloat(data["sht-dew"]);
   }
   update_date = datetime.substring(0, datetime.indexOf('.')); datetime;
+  LOG("UPDATE DATE = " + update_date);
+  test_ts = Date.parseExact(update_date, "yyyy-MM-dd HH:mm:ss");
+  LOG("TEST TS " + test_ts);
 
   // now compute trends
   temperature_trend = (temperature > last_temperature ? 1 : (temperature < last_temperature ? -1 : 0));
@@ -540,42 +540,42 @@ function process_observations(data)
   // now handle min/max
   if (temperature < lowest_temperature)  {
     lowest_temperature = temperature;
-    lowest_temperature_timestamp = Date.parseExact(update_date, "yyyy-MM-dd hh:mm:ss");
+    lowest_temperature_timestamp = Date.parseExact(update_date, "yyyy-MM-dd HH:mm:ss");
   }
   if (temperature > highest_temperature)  {
     highest_temperature = temperature;
-    highest_temperature_timestamp = Date.parseExact(update_date, "yyyy-MM-dd hh:mm:ss");
+    highest_temperature_timestamp = Date.parseExact(update_date, "yyyy-MM-dd HH:mm:ss");
   }
 
   if (pressure < lowest_pressure)  {
     lowest_pressure = pressure;
-    lowest_pressure_timestamp = Date.parseExact(update_date, "yyyy-MM-dd hh:mm:ss");
+    lowest_pressure_timestamp = Date.parseExact(update_date, "yyyy-MM-dd HH:mm:ss");
   }
   if (pressure > highest_pressure)  {
     highest_pressure = pressure;
-    highest_pressure_timestamp = Date.parseExact(update_date, "yyyy-MM-dd hh:mm:ss");
+    highest_pressure_timestamp = Date.parseExact(update_date, "yyyy-MM-dd HH:mm:ss");
   }
 
   if (humidity < lowest_humidity)  {
     lowest_humidity = humidity;
-    lowest_humidity_timestamp = Date.parseExact(update_date, "yyyy-MM-dd hh:mm:ss");
+    lowest_humidity_timestamp = Date.parseExact(update_date, "yyyy-MM-dd HH:mm:ss");
   }
   if (humidity > highest_humidity)  {
     highest_humidity = humidity;
-    highest_humidity_timestamp = Date.parseExact(update_date, "yyyy-MM-dd hh:mm:ss");
+    highest_humidity_timestamp = Date.parseExact(update_date, "yyyy-MM-dd HH:mm:ss");
   }
 
   if (dewpoint < lowest_dewpoint)  {
     lowest_dewpoint = dewpoint;
-    lowest_dewpoint_timestamp = Date.parseExact(update_date, "yyyy-MM-dd hh:mm:ss");
+    lowest_dewpoint_timestamp = Date.parseExact(update_date, "yyyy-MM-dd HH:mm:ss");
   }
   if (dewpoint > highest_dewpoint)  {
     highest_dewpoint = dewpoint;
-    highest_dewpoint_timestamp = Date.parseExact(update_date, "yyyy-MM-dd hh:mm:ss");
+    highest_dewpoint_timestamp = Date.parseExact(update_date, "yyyy-MM-dd HH:mm:ss");
   }
 
-  console.log("update_date " + update_date + " " + typeof update_date);
-  console.log("temp hi " + highest_temperature_timestamp + " " + typeof highest_temperature_timestamp);
+  LOG("update_date " + update_date + " " + typeof update_date);
+  LOG("temp hi " + highest_temperature_timestamp + " " + typeof highest_temperature_timestamp);
 
   // now save them out
   $.cookie("lowest_temperature", lowest_temperature);
@@ -630,7 +630,7 @@ function process_observations(data)
 
   $("#field_temperature_high").text(convert_to_current_temperature_unit(highest_temperature).toFixed(2));
   $("#field_pressure_high").text(highest_pressure);
-  console.log(typeof highest_humidity);
+  LOG(typeof highest_humidity);
   $("#field_humidity_high").text(highest_humidity.toFixed(2));
   $("#field_dewpoint_high").text(highest_dewpoint.toFixed(2));
 
@@ -644,13 +644,16 @@ function process_observations(data)
   // docs: https://code.google.com/p/datejs/wiki/FormatSpecifiers
   // Date.parseExact doesn't like the millisecond part of python date, so just strip
   // it out.  Oh well, so much for millisecond-level accuracy. :-P
+  LOG("datetime before munge [" + datetime + "]");
   datetime = datetime.substring(0, datetime.indexOf('.'));
-  var update_date = Date.parseExact(datetime, "yyyy-MM-dd hh:mm:ss");
-  LOG(typeof datetime);
-  LOG(datetime);
-  LOG(typeof update_date);
-  LOG(update_date);
+  //var update_date = Date.parseExact(datetime, "yyyy-MM-dd HH:mm:ss");
+  var update_date = new Date();
+  LOG("datetime type = " + typeof datetime);
+  LOG("datetime = [" + datetime + "]");
+  LOG("typeof update_date = " + typeof update_date);
+  LOG("update_date = " + update_date.toLocaleDateString());
   $("#field_last_updated").html(get_date_string(update_date));
+  LOG("highest temp timestamp " + highest_temperature_timestamp + " type " + typeof highest_temperature_timestamp);
   $("#field_temperature_high_timestamp").html(get_date_string(highest_temperature_timestamp));
   $("#field_pressure_high_timestamp").html(get_date_string(highest_pressure_timestamp));
   $("#field_humidity_high_timestamp").html(get_date_string(highest_humidity_timestamp));
