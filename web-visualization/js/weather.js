@@ -473,7 +473,7 @@ function force_update(completion_handler)
   // disable the refresh button and replace it with a spinner
   toggleButton("#button-update");
 
-  var jqxhr = $.getJSON( "wxdata2.json", function(data) {
+  var jqxhr = $.getJSON( "wxdata.json", function(data) {
     LOG( "success" );
     LOG("SUCCESS, received data: " + JSON.stringify(data, null, 4));
     process_observations(data);
