@@ -1,0 +1,49 @@
+[
+  {"DSP":
+    [  "SCR-NAME   SCR-X   SCR-Y   SCR-W   SCR-D   SCR-BCK",
+       "wx_data", null,   null,   320,    240,    [250,250,250],
+                        "FLD-TAG     FLD-OBJ    FLD-X    FLD-Y",  
+       {"dsp_fields":{  
+                        "L1" :   ["Time",       10,      40]   ,
+                        "L2" :   ["Pressure",   10,      80]   ,
+                        "L3" :   ["Temperature",10,      120]   ,
+                        "L4" :   ["Humidity",   10,      160]   ,
+                        "L5" :   ["Dew point",  10,      200]  ,
+                        "D1" :   [null,      140,      40]   ,
+                        "D2" :   [null,      140,      80]   ,
+                        "D3" :   [null,      140,      120]   ,
+                        "D4" :   [null,      140,      160]   ,
+                        "D5" :   [null,      140,      200]  
+                     }
+       }
+    ]
+  },
+
+  {"DESC": {
+            "time-tag" : ["wxdata","S", "Time",     ""],
+            "bmp-pres" : ["wxdata","S", "Pressure", ""],
+            "bmp-temp" : ["wxdata","S", "Temperature", ""],
+            "sht-hum"  : ["wxdata","S", "Humidity",  ""],
+            "sht-dew"  : ["wxdata","S", "Dew point",  ""]
+           }
+  },
+
+  {"ASG" : {
+            "L1"   :  [null, "Time", "S", null],
+            "L2"   :  [null, "Pressure", "S", null],
+            "L3"   :  [null, "Temperature", "S", null],
+            "L4"   :  [null, "Humidity", "S", null],
+            "L5"   :  [null, "Dew point", "S", null],
+            "D1"   :  ["time-tag", null, "S", null],
+            "D2"   :  ["bmp-pres", null, "S", null],
+            "D3"   :  ["bmp-temp", null, "S", null],
+            "D4"   :  ["sht-hum",  null, "S", null],
+            "D5"   :  ["sht-dew",  null, "S", null]
+           }
+         
+  }
+
+]
+ 
+
+
