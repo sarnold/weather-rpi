@@ -22,24 +22,32 @@ Assumes default Raspbian image and user "pi" (tested with lighttpd).  Adjust to 
 
 Clone this repository under ~/src (use --recursive to pull in the sensor code).
 
+```
  $ mkdir -p ~/src && cd ~/src
  $ git clone --recursive https://github.com/VCTLabs/weather-rpi.git
+```
 
 Enable mod_user_dir in your web server (apache, lighttpd, etc) and restart it.
 
 Copy the contents of web-visualization to ~/public_html.
 
+```
  $ mkdir -p ~/public_html
  $ cp -aRv ~/src/weather-rpi/web-visualization/* ~/public_html/
+```
 
 Change to ~/src/weather-rpi/data-acquisition/python directory and run the monitor script.
 
+```
  $ cd ~/src/weather-rpi/data-acquisition/python
  $ sudo python -u SensorStick-monitor.py > output.log
+```
 
 Point your web browser at your RPi's hostname or IP address:
 
+```
  $ epiphany http://localhost/~pi/weather.html  - or -
  $ firefox http://weatherpi-1.domain.org/~pi/weather.html
+```
 
 Edit SensorStick-monitor.py to enable verbose console outout.
