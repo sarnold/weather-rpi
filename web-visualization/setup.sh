@@ -31,43 +31,12 @@ function install_package
   fi
 }
 
-# ffmpeg setup code is broken out into its own function because it
-# is used in 2 spots in this script
-function install_ffmpeg
-{
-  if [ "$DEBUG" = "YES" ]; then
-    echo "skipping install of ffmpeg, we are in DEBUG Mode"
-    echo "NOTE: this may break other apps that depend on it."
-  elif hash ffserver 2>/dev/null; then
-    echo "skipping install of ffmpeg, it is already present"
-  else
-    echo "*** building current ffmpeg from source ***"
-    mkdir $HOME/src
-    cd $HOME/src
-    git clone git://source.ffmpeg.org/ffmpeg.git
-    cd ffmpeg
-    if [ "$INSTALL_FFMPEG_IN_USR" = "YES" ]; then
-      ./configure --prefix=/usr
-    else
-      ./configure
-    fi
-    make
-    sudo make install
-    echo "*** setting up symlinks ***"
-    if [ "$INSTALL_FFMPEG_IN_USR" != "YES" ]; then
-      for COMMAND in ffmpeg ffprobe ffserver; do
-        sudo rm -f /usr/bin/$COMMAND && sudo ln -sf ../local/bin/$COMMAND /usr/bin/$COMMAND
-      done
-    fi
-  fi
-}
-
 # set up lighttpd+php
 # http://www.instructables.com/id/Setup-a-Raspberry-Pi-PHP-web-server/?ALLSTEPS
-echo -n "Ready to Install Pi webserver environment (lighttpd+php)? [yn] "
+echo -n "Ready to Install WeatherPi webserver environment (lighttpd, etc.)? [yn] "
 read INSTALL_LIGHTTPD
 if [ "$INSTALL_LIGHTTPD" = "y" ]; then
-  echo "*** installing lighttpd and php packages ***"
+  echo "*** installing lighttpd ***"
   install_package lighttpd
   if [ "$INSTALL_PHP" = "YES" ]; then
     echo "*** installing php ***"
@@ -92,7 +61,7 @@ if [ "$INSTALL_LIGHTTPD" = "y" ]; then
   sudo chown www-data:www-data /var/www
   sudo chmod 775 /var/www
   sudo usermod -a -G www-data pi
-  echo "*** installing default www files ***"
+  echo "*** installing weatherpi www files ***"
   sudo cp -a $D/configs/lighttpd/* /var/www
   sudo chmod -R g+w /var/www
   if [ -f $HOME/public_html/index.html.home ]; then
@@ -100,7 +69,6 @@ if [ "$INSTALL_LIGHTTPD" = "y" ]; then
   fi
   echo "*** restarting lighttpd ***"
   sudo service lighttpd force-reload
-  echo "*** installing content ***"
 fi
 
 echo ""
