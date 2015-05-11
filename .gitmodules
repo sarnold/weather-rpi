@@ -10,3 +10,6 @@
 [submodule "drivers/Adafruit_Python_BMP"]
 	path = drivers/Adafruit_Python_BMP
 	url = https://github.com/adafruit/Adafruit_Python_BMP.git
+[submodule "drivers/RaspberryPi-AS3935"]
+	path = drivers/RaspberryPi-AS3935
+	url = https://github.com/VCTLabs/RaspberryPi-AS3935.git
