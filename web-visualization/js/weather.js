@@ -636,7 +636,7 @@ function process_observations(data)
   $("#field_temperature").text(convert_to_current_temperature_unit(temperature).toFixed(2));
   $("#field_pressure").text(pressure);
   $("#field_humidity").text(humidity.toFixed(2));
-  $("#field_dewpoint").text(dewpoint.toFixed(2));
+  $("#field_dewpoint").text(convert_to_current_temperature_unit(dewpoint).toFixed(2));
 
   switch(temperature_trend)  {
     case -1: $("#trend_temperature").html("&#8595;"); break;
@@ -668,12 +668,12 @@ function process_observations(data)
   $("#field_pressure_high").text(highest_pressure);
   LOG(1, typeof highest_humidity);
   $("#field_humidity_high").text(highest_humidity.toFixed(2));
-  $("#field_dewpoint_high").text(highest_dewpoint.toFixed(2));
+  $("#field_dewpoint_high").text(convert_to_current_temperature_unit(highest_dewpoint).toFixed(2));
 
   $("#field_temperature_low").text(convert_to_current_temperature_unit(lowest_temperature).toFixed(2));
   $("#field_pressure_low").text(lowest_pressure);
   $("#field_humidity_low").text(lowest_humidity.toFixed(2));
-  $("#field_dewpoint_low").text(lowest_dewpoint.toFixed(2));
+  $("#field_dewpoint_low").text(convert_to_current_temperature_unit(lowest_dewpoint).toFixed(2));
 
   // display update date
   // example: 2014-12-31 01:52:32.414871
