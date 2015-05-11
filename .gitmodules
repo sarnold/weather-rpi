@@ -1,3 +1,12 @@
 [submodule "data-acquisition"]
 	path = data-acquisition
 	url = https://github.com/VCTLabs/pi-sensor-test.git
+[submodule "drivers/RPi.GPIO"]
+	path = drivers/RPi.GPIO
+	url = https://github.com/VCTLabs/RPi.GPIO.git
+[submodule "drivers/rpisht1x"]
+	path = drivers/rpisht1x
+	url = https://github.com/VCTLabs/rpisht1x.git
+[submodule "drivers/Adafruit_Python_BMP"]
+	path = drivers/Adafruit_Python_BMP
+	url = https://github.com/adafruit/Adafruit_Python_BMP.git
