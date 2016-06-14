@@ -1,6 +1,6 @@
 [submodule "data-acquisition"]
 	path = data-acquisition
-	url = https://github.com/VCTLabs/pi-sensor-test.git
+	url = https://github.com/VCTLabs/py-sensor-test.git
 [submodule "drivers/RPi.GPIO"]
 	path = drivers/RPi.GPIO
 	url = https://github.com/VCTLabs/RPi.GPIO.git
